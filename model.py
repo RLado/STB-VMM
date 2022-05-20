@@ -15,15 +15,15 @@ import collections.abc
 # -----------------------------------------------------------------------------------
 
 def drop_path(x, drop_prob: float = 0., training: bool = False, scale_by_keep: bool = True):
-    """Drop paths (Stochastic Depth) per sample (when applied in main path of residual blocks).
+    '''
+    Drop paths (Stochastic Depth) per sample (when applied in main path of residual blocks).
 
     This is the same as the DropConnect impl I created for EfficientNet, etc networks, however,
     the original name is misleading as 'Drop Connect' is a different form of dropout in a separate paper...
     See discussion: https://github.com/tensorflow/tpu/issues/494#issuecomment-532968956 ... I've opted for
     changing the layer and argument names to 'drop path' rather than mix DropConnect as a layer name and use
     'survival rate' as the argument.
-
-    """
+    '''
     if drop_prob == 0. or not training:
         return x
     keep_prob = 1 - drop_prob
@@ -34,7 +34,8 @@ def drop_path(x, drop_prob: float = 0., training: bool = False, scale_by_keep: b
     return x * random_tensor
 
 class DropPath(nn.Module):
-    '''Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).
+    '''
+    Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).
     '''
     def __init__(self, drop_prob=None, scale_by_keep=True):
         super(DropPath, self).__init__()
@@ -137,13 +138,17 @@ class Mlp(nn.Module):
 def window_partition(x, window_size):
     '''
     Args:
-        x: (B, H, W, C)
+        x: (B, H, W, C)H
         window_size (int): window size
 
     Returns:
         windows: (num_windows*B, window_size, window_size, C)
     '''
     B, H, W, C = x.shape
+    #   Debug
+    #print("B, H, W, C")
+    #print(window_size)
+    #print(x.shape)
     x = x.view(B, H // window_size, window_size, W // window_size, window_size, C)
     windows = x.permute(0, 1, 3, 2, 4, 5).contiguous().view(-1, window_size, window_size, C)
     return windows
@@ -744,31 +749,30 @@ class VMMpp(nn.Module):
 
     '''
 
-    def __init__(self, img_size=64, patch_size=1, in_chans=3,
-                 embed_dim=96, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6],
-                 window_size=7, mlp_ratio=4., qkv_bias=True, qk_scale=None,
+    def __init__(self, img_size=384, patch_size=1, in_chans=3,
+                 embed_dim=60, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6],
+                 window_size=8, mlp_ratio=4., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
                  norm_layer=nn.LayerNorm, ape=False, patch_norm=True,
                  use_checkpoint=False, img_range=1., resi_connection='1conv',
                  manipulator_num_resblk = 1,
                  **kwargs):
         super(VMMpp, self).__init__()
+        img_size = img_size // 4
         num_in_ch = in_chans
         num_out_ch = in_chans
         num_feat = 64
         self.img_range = img_range
         if in_chans == 3:
             rgb_mean = (0.4488, 0.4371, 0.4040)
-            self.mean_a = torch.Tensor(rgb_mean).view(1, 3, 1, 1)
-            self.mean_b = torch.Tensor(rgb_mean).view(1, 3, 1, 1)
+            self.mean = torch.Tensor(rgb_mean).view(1, 3, 1, 1)
         else:
-            self.mean_a = torch.zeros(1, 1, 1, 1)
-            self.mean_b = torch.zeros(1, 1, 1, 1)
+            self.mean = torch.zeros(1, 1, 1, 1)
         self.window_size = window_size
 
         #####################################################################################################
         ################################### 1, Shallow Feature Extraction ###################################
-        self.conv_first = nn.Conv2d(num_in_ch, embed_dim, 3, 1, 1)
+        self.conv_first = nn.Conv2d(num_in_ch, embed_dim, 4, 4, 0) #Downsample x4
 
         #####################################################################################################
         ################################### 2, Deep Feature Extraction ######################################
@@ -903,6 +907,7 @@ class VMMpp(nn.Module):
         
         #####################################################################################################
         ##################################### 5, Decoder Reconstruction #####################################
+        self.upsample_conv = nn.ConvTranspose2d(embed_dim, embed_dim, 4, 4, 0)
         self.conv_last = nn.Conv2d(embed_dim, num_out_ch, 3, 1, 1)
 
         #Init weights
@@ -960,10 +965,10 @@ class VMMpp(nn.Module):
         a = self.check_image_size(a)
         b = self.check_image_size(b)
         
-        self.mean_a = self.mean_a.type_as(a)
-        self.mean_b = self.mean_b.type_as(b)
-        a = (a - self.mean_a) * self.img_range
-        b = (b - self.mean_b) * self.img_range
+        self.mean = self.mean.type_as(a)
+
+        a = (a - self.mean) * self.img_range
+        b = (b - self.mean) * self.img_range
 
         # Forward
         ## Shallow Feature Extractor
@@ -981,14 +986,14 @@ class VMMpp(nn.Module):
         res_m = self.conv_after_body_mmsa(self.forward_features_mmsa(m)) + m
 
         ## Decoder Reconstruction
-        y_hat = self.conv_last(res_m)
+        y_hat = self.conv_last(self.upsample_conv(res_m))
 
-        return y_hat
+        return y_hat, res_a, res_b
 
 if __name__ == '__main__':
     model = VMMpp(img_size=384, patch_size=1, in_chans=3,
                  embed_dim=48, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6],
-                 window_size=8, mlp_ratio=4., qkv_bias=True, qk_scale=None,
+                 window_size=8, mlp_ratio=2., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
                  norm_layer=nn.LayerNorm, ape=False, patch_norm=True,
                  use_checkpoint=False, img_range=1., resi_connection='1conv',
