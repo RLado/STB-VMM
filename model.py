@@ -772,7 +772,7 @@ class VMMpp(nn.Module):
 
         #####################################################################################################
         ################################### 1, Shallow Feature Extraction ###################################
-        self.conv_first = nn.Conv2d(num_in_ch, embed_dim, 4, 4, 0) #Downsample x4
+        self.conv_first = nn.Conv2d(num_in_ch, embed_dim, 8, 8, 0) #Downsample x4
 
         #####################################################################################################
         ################################### 2, Deep Feature Extraction ######################################
@@ -907,7 +907,7 @@ class VMMpp(nn.Module):
         
         #####################################################################################################
         ##################################### 5, Decoder Reconstruction #####################################
-        self.upsample_conv = nn.ConvTranspose2d(embed_dim, embed_dim, 4, 4, 0)
+        self.upsample_conv = nn.ConvTranspose2d(embed_dim, embed_dim, 8, 8, 0)
         self.conv_last = nn.Conv2d(embed_dim, num_out_ch, 3, 1, 1)
 
         #Init weights

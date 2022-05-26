@@ -62,7 +62,7 @@ def main():
 
     # create model
     model = VMMpp(img_size=384, patch_size=1, in_chans=3,
-                 embed_dim=48, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6],
+                 embed_dim=180, depths=[6, 6, 6, 6, 6, 6], num_heads=[6, 6, 6, 6, 6, 6],
                  window_size=8, mlp_ratio=2., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
                  norm_layer=nn.LayerNorm, ape=False, patch_norm=True,
@@ -107,6 +107,15 @@ def main():
                                 betas=(0.9,0.999),
                                 weight_decay=args.weight_decay)
 
+    #Summary of the system =====================================================
+    print('===================================================================')
+    print('PyTorch Version: ',torch.__version__)
+    #print('Torchvision Version: ',torchvision.__version__)
+    print('===================================================================')
+
+    #Summary of the model ======================================================
+    print('Network parameters {}'.format(sum(p.numel() for p in model.parameters())))
+    print('Trainable network parameters {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
     # train model
     for epoch in range(args.start_epoch, args.epochs):
