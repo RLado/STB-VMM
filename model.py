@@ -750,13 +750,14 @@ class VMMpp(nn.Module):
     '''
 
     def __init__(self, img_size=384, patch_size=1, in_chans=3,
-                 embed_dim=60, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6],
-                 window_size=8, mlp_ratio=4., qkv_bias=True, qk_scale=None,
+                 embed_dim=192, depths=[6, 6, 6, 6, 6, 6], num_heads=[6, 6, 6, 6, 6, 6],
+                 window_size=8, mlp_ratio=2., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
                  norm_layer=nn.LayerNorm, ape=False, patch_norm=True,
                  use_checkpoint=False, img_range=1., resi_connection='1conv',
                  manipulator_num_resblk = 1,
                  **kwargs):
+                 
         super(VMMpp, self).__init__()
         img_size = img_size // 4
         num_in_ch = in_chans
@@ -959,7 +960,7 @@ class VMMpp(nn.Module):
 
         return x
 
-    def forward(self, a, b, amp):
+    def forward(self, a, b, amp, c = None):
         if a.shape != b.shape:
             raise RuntimeError('Image size mismatch')
         a = self.check_image_size(a)
@@ -987,8 +988,25 @@ class VMMpp(nn.Module):
 
         ## Decoder Reconstruction
         y_hat = self.conv_last(self.upsample_conv(res_m))
+        
+        ## Extract features for c if training and not None
+        if c != None and self.training:
+            if b.shape != c.shape:
+                raise RuntimeError('Image C size mismatch')
+            c = self.check_image_size(c)
 
-        return y_hat, res_a, res_b
+            c = (c - self.mean) * self.img_range
+
+            ## Shallow Feature Extractor
+            c_first = self.conv_first(c)
+
+            ## Deep Feature Extractor
+            res_c = self.conv_after_body_dfe(self.forward_features_dfe(c_first)) + c_first
+
+            return y_hat, res_a, res_b, res_c
+
+        else:
+            return y_hat, res_a, res_b, None
 
 if __name__ == '__main__':
     model = VMMpp(img_size=384, patch_size=1, in_chans=3,
@@ -999,9 +1017,19 @@ if __name__ == '__main__':
                  use_checkpoint=False, img_range=1., resi_connection='1conv',
                  manipulator_num_resblk = 1)
     
+    model.eval()
+
     a = torch.randn((1,3,384,384))
     b = torch.randn((1,3,384,384))
 
-    y_hat = model(a, b, .2)
+    output = model(a, b, .2)
 
-    print(y_hat.shape)
+    print(output[0].shape)
+    print(output[3])
+
+    model.train()
+
+    output = model(a, b, .2, b)
+
+    print(output[0].shape)
+    print(output[3].shape)
