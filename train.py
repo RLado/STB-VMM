@@ -1,6 +1,5 @@
 import argparse
 import os
-import shutil
 import time
 
 import torch
@@ -15,10 +14,8 @@ from data_loader import ImageFromFolder
 from utils import AverageMeter
 
 
-def main():
-    global args
+def main(args):
     global losses_recon, losses_reg1
-    args = parser.parse_args()
     print(args)
 
     # create model
@@ -193,4 +190,4 @@ if __name__ == '__main__':
 
     losses_recon, losses_reg1 = [],[]
 
-    main()
+    main(args)
