@@ -1,25 +1,18 @@
 import argparse
 import os
-import time
 
+import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.parallel
-import torch.optim
 import torch.utils.data as data
 import torchvision.datasets as datasets
-
-from model import VMMpp
-from data_loader import ImageFromFolderTest
-from utils import AverageMeter
-import numpy as np
 from PIL import Image
-from collections import OrderedDict
+
+from data_loader import ImageFromFolderTest
+from model import VMMpp
 
 
 def main(args):
-    print(args)
-
     # create model
     model = VMMpp(img_size=384, patch_size=1, in_chans=3,
                  embed_dim=192, depths=[6, 6, 6, 6, 6, 6], num_heads=[6, 6, 6, 6, 6, 6],
@@ -151,6 +144,8 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PyTorch Deep Video Magnification')
+    
+    #Compute parameters
     parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                         help='number of data loading workers (default: 0)')
     parser.add_argument('-b', '--batch-size', default=1, type=int,
@@ -161,10 +156,12 @@ if __name__ == '__main__':
                         help='path to load checkpoint')
     parser.add_argument('--save_dir', default='demo', type=str, metavar='PATH',
                         help='path to save generated frames (default: demo)')
+    
     #Device
     parser.add_argument('--device',type=str,default='auto',metavar='',
     help='Select device [auto/cpu/cuda] [Default=auto]')
 
+    #Application parameters
     parser.add_argument('-m', '--amp', default=20.0, type=float,
                         help='amplification factor (default: 10.0)')
     parser.add_argument('--mode', default='static', type=str, choices=['static', 'dynamic', 'temporal'],
@@ -176,8 +173,8 @@ if __name__ == '__main__':
     #for temporal filter
     parser.add_argument('--fh', default=0.4, type=float)
     parser.add_argument('--fl', default=0.04, type=float)
-    #parser.add_argument('--fs', default=30, type=int)
-    #parser.add_argument('--ntab', default=2, type=int)
+    
+
 
     args = parser.parse_args()
 

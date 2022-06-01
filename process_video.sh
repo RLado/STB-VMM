@@ -90,6 +90,12 @@ rm -rf "$save_dir"/"$output"_original
 mkdir "$save_dir"/"$output"_original
 ffmpeg -i "$input" "$save_dir"/"$output"_original/frame_%06d.png
 
+#Reshape frames to be divisible by 64
+echo "Reshaping frames..."
+for i in "$save_dir"/"$output"_original/*.png; do
+    python3 ./utils/auto_pad.py -i "$i" -d 64 -o "$i"
+done
+
 #Count frames
 ls "$save_dir"/"$output"_original|wc -l
 num_data=$(($(ls "$save_dir"/"$output"_original|wc -l)-1))

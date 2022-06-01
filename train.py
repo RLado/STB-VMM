@@ -6,18 +6,15 @@ import torch
 import torch.nn as nn
 import torch.optim
 import torch.utils.data as data
-import torchvision.transforms as transforms
 import torchvision.datasets as datasets
+import torchvision.transforms as transforms
 
-from model import VMMpp
 from data_loader import ImageFromFolder
-from utils import AverageMeter
+from model import VMMpp
+from utils.avgMeter import AverageMeter
 
 
 def main(args):
-    global losses_recon, losses_reg1
-    print(args)
-
     # create model
     model = VMMpp(img_size=384, patch_size=1, in_chans=3,
                  embed_dim=192, depths=[6, 6, 6, 6, 6, 6], num_heads=[6, 6, 6, 6, 6, 6],
