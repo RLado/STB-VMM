@@ -759,10 +759,9 @@ class VMMpp(nn.Module):
                  **kwargs):
                  
         super(VMMpp, self).__init__()
-        img_size = img_size // 4
+        img_size = img_size // 8
         num_in_ch = in_chans
         num_out_ch = in_chans
-        num_feat = 64
         self.img_range = img_range
         if in_chans == 3:
             rgb_mean = (0.4488, 0.4371, 0.4040)
@@ -773,7 +772,7 @@ class VMMpp(nn.Module):
 
         #####################################################################################################
         ################################### 1, Shallow Feature Extraction ###################################
-        self.conv_first = nn.Conv2d(num_in_ch, embed_dim, 8, 8, 0) #Downsample x4
+        self.conv_first = nn.Conv2d(num_in_ch, embed_dim, 8, 8, 0) #Downsample x8
 
         #####################################################################################################
         ################################### 2, Deep Feature Extraction ######################################

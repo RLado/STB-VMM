@@ -175,8 +175,8 @@ if __name__ == '__main__':
     #Device
     parser.add_argument('--device',type=str,default='auto',metavar='',
     help='Select device [auto/cpu/cuda] [Default=auto]')
-    parser.add_argument('--weight_reg1', default=1.0, type=float,
-                        help='weight regularization loss B - C (default: 1.0)')
+    parser.add_argument('--weight_reg1', default=0.1, type=float,
+                        help='weight regularization loss B - C (default: 0.1)')
     args = parser.parse_args()
 
     #Device choice (auto) ======================================================
