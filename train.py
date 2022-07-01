@@ -9,9 +9,9 @@ import torch.utils.data as data
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 
-from data_loader import ImageFromFolder
-from model import VMMpp
+from utils.data_loader import ImageFromFolder
 from utils.avgMeter import AverageMeter
+from model.model import VMMpp
 
 
 def main(args):

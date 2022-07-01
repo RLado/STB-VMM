@@ -8,8 +8,8 @@ import torch.utils.data as data
 import torchvision.datasets as datasets
 from PIL import Image
 
-from data_loader import ImageFromFolderTest
-from model import VMMpp
+from utils.data_loader import ImageFromFolderTest
+from model.model import VMMpp
 
 
 def main(args):
