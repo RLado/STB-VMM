@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 
 from utils.data_loader import ImageFromFolder
 from utils.avgMeter import AverageMeter
-from model.model import VMMpp
+from models.model import VMMpp
 
 
 def main(args):
