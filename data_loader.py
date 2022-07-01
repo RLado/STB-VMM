@@ -3,7 +3,6 @@ import numpy as np
 import torch
 
 class ImageFromFolder(ImageFolder):
-    
     def __init__(self, root, num_data=100000, preprocessing=False, transform=None, target_transform=None,
                  loader=default_loader):
 
@@ -78,9 +77,8 @@ def preproc_poisson_noise(image):
     return image + nn * n * n_str
 
 class ImageFromFolderTest(ImageFolder):
-    
-    def __init__(self, root, mag=10.0,  mode='static', num_data=300, preprocessing=False, transform=None, target_transform=None, loader=default_loader):
-        if mode=='static' or mode=='temporal':
+    def __init__(self, root, mag=10.0, mode='static', num_data=300, preprocessing=False, transform=None, target_transform=None, loader=default_loader):
+        if mode=='static':
             imgs = [(root+'_%06d.png'%(1),
                      root+'_%06d.png'%(i+2),
                      mag) for i in range(num_data)]
@@ -90,7 +88,6 @@ class ImageFromFolderTest(ImageFolder):
                      mag) for i in range(num_data)]
         else:
             raise ValueError("Unsupported modes %s"%(mode))
-
 
         self.root = root
         self.imgs = imgs
@@ -138,6 +135,7 @@ class ImageFromFolderTest(ImageFolder):
         sampleB = sampleB.permute(2,0,1)
 
         return sampleA, sampleB, target
+
 # Test
 if __name__ == '__main__':
 
@@ -148,8 +146,3 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     plt.imshow(((imageA+1.0)*127.5).astype(np.uint8))
     plt.show()
-    #print(imgAmp.shape, imgA.shape, imgB.shape, imgC.shape, mag)
-    #print(img, target)
-
-    
-

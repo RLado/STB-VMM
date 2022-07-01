@@ -14,7 +14,7 @@ print_usage() {
   -s (save dir): Path to a directory to store result files (required)
   -m (model chekpoint): Path to the last model checkpoint (required)
   -o (output): Output project name (required)
-  -mod (mode): static(default)/dynamic/temporal(params default)
+  -mod (mode): static(default)/dynamic (params default)
   -f (framerate): Framerate of the input video (default 60)
   -c (cuda): Activates cuda (default cpu)
 
@@ -92,8 +92,13 @@ ffmpeg -i "$input" "$save_dir"/"$output"_original/frame_%06d.png
 
 #Reshape frames to be divisible by 64
 echo "Reshaping frames..."
+num_jobs="\j"  # The prompt escape for number of jobs currently running
+max_procs=120 # Change to increase/decrease the concurrent reshaping calculations
 for i in "$save_dir"/"$output"_original/*.png; do
-    python3 ./utils/auto_pad.py -i "$i" -d 64 -o "$i"
+    while (( ${num_jobs@P} > $max_procs )); do
+        wait -n
+    done
+    python3 ./utils/auto_pad.py -i "$i" -d 64 -o "$i" &
 done
 
 #Count frames

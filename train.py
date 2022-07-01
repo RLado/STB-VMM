@@ -15,7 +15,7 @@ from utils.avgMeter import AverageMeter
 
 
 def main(args):
-    # create model
+    # Create model
     model = VMMpp(img_size=384, patch_size=1, in_chans=3,
                  embed_dim=192, depths=[6, 6, 6, 6, 6, 6], num_heads=[6, 6, 6, 6, 6, 6],
                  window_size=8, mlp_ratio=2., qkv_bias=True, qk_scale=None,
@@ -25,7 +25,7 @@ def main(args):
                  manipulator_num_resblk = 1).to(device)
     #print(model)
 
-    # optionally resume from a checkpoint
+    # Optionally resume from a checkpoint
     if args.resume:
         if os.path.isfile(args.resume):
             print("=> loading checkpoint '{}'".format(args.resume))
@@ -40,13 +40,13 @@ def main(args):
         else:
             print("=> no checkpoint found at '{}'".format(args.resume))
 
-    # check saving directory
+    # Check saving directory
     ckpt_dir = args.ckpt
     if not os.path.exists(ckpt_dir):
         os.makedirs(ckpt_dir)
     print(ckpt_dir)
 
-    # dataloader
+    # Dataloader
     dataset_mag = ImageFromFolder(args.dataset, num_data=args.num_data, preprocessing=True) 
     data_loader = data.DataLoader(dataset_mag, 
         batch_size=args.batch_size, 
@@ -54,29 +54,29 @@ def main(args):
         num_workers=args.workers,
         pin_memory=False)
 
-    # loss criterion
+    # Loss criterion
     criterion = nn.L1Loss(reduction='mean').to(device)
 
-    # optimizer 
+    # Optimizer 
     optimizer = torch.optim.Adam(model.parameters(), args.lr,
                                 betas=(0.9,0.999),
                                 weight_decay=args.weight_decay)
 
-    #Summary of the system =====================================================
+    # Summary of the system =====================================================
     print('===================================================================')
     print('PyTorch Version: ',torch.__version__)
     #print('Torchvision Version: ',torchvision.__version__)
     print('===================================================================')
 
-    #Summary of the model ======================================================
+    # Summary of the model ======================================================
     print('Network parameters {}'.format(sum(p.numel() for p in model.parameters())))
     print('Trainable network parameters {}'.format(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
-    # train model
+    # Train model
     for epoch in range(args.start_epoch, args.epochs):
         loss_recon, loss_reg1 = train(data_loader, model, criterion, optimizer, epoch, args)
         
-        # stack losses
+        # Stack losses
         losses_recon.append(loss_recon)
         losses_reg1.append(loss_reg1)
 
@@ -88,7 +88,7 @@ def main(args):
         }
         model.to(device) #Return model to device
 
-        # save checkpoints
+        # Save checkpoints
         fpath = os.path.join(ckpt_dir, 'ckpt_e%02d.pth.tar'%(epoch))
         torch.save(dict_checkpoint, fpath)
 
@@ -109,11 +109,11 @@ def train(loader, model, criterion, optimizer, epoch, args):
         amp_factor = amp_factor.to(device)
         data_time.update(time.time() - end)
 
-        # compute output
+        # Compute output
         amp_factor = amp_factor.unsqueeze(1).unsqueeze(1).unsqueeze(1)
         y_hat, rep_a, rep_b, rep_c = model(xa, xb, amp_factor, xc)
 
-        # compute losses
+        # Compute losses
         loss_recon = criterion(y_hat, y)
         loss_reg1 = args.weight_reg1 * L1_loss(rep_b, rep_c)
         loss = loss_recon + loss_reg1
@@ -121,12 +121,12 @@ def train(loader, model, criterion, optimizer, epoch, args):
         losses_recon.update(loss_recon.item()) 
         losses_reg1.update(loss_reg1.item()) 
 
-        # update model
+        # Update model
         optimizer.zero_grad()
         loss.backward()
         optimizer.step() 
 
-        # measure elapsed time
+        # Measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
 
@@ -145,9 +145,9 @@ def train(loader, model, criterion, optimizer, epoch, args):
 def L1_loss(input, target):
     return torch.abs(input - target).mean()
 
- 
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='PyTorch Deep Video Magnification')
+    parser = argparse.ArgumentParser(description = 'Transformer Based Video Motion Magnification')
     parser.add_argument('-d', '--dataset', default='./../data/train', type=str, 
                         help='Path to the train folder of the dataset')
     parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
@@ -172,14 +172,15 @@ if __name__ == '__main__':
                         help='path to latest checkpoint (default: none)')
     parser.add_argument('--ckpt', default='ckpt', type=str, metavar='PATH',
                         help='path to save checkpoint (default: ckpt)')
-    #Device
+    
+    # Device
     parser.add_argument('--device',type=str,default='auto',metavar='',
     help='Select device [auto/cpu/cuda] [Default=auto]')
     parser.add_argument('--weight_reg1', default=0.1, type=float,
                         help='weight regularization loss B - C (default: 0.1)')
     args = parser.parse_args()
 
-    #Device choice (auto) ======================================================
+    # Device choice (auto) ======================================================
     if args.device=='auto':
         device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     else:
