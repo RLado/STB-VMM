@@ -92,7 +92,8 @@ def _no_grad_trunc_normal_(tensor, mean, std, a, b):
 
 def trunc_normal_(tensor, mean=0., std=1., a=-2., b=2.):
     # type: (Tensor, float, float, float, float) -> Tensor
-    r'''Fills the input Tensor with values drawn from a truncated
+    '''
+    Fills the input Tensor with values drawn from a truncated
     normal distribution. The values are effectively drawn from the
     normal distribution :math:`\mathcal{N}(\text{mean}, \text{std}^2)`
     with values outside :math:`[a, b]` redrawn until they are within
@@ -172,7 +173,8 @@ def window_reverse(windows, window_size, H, W):
 
 
 class WindowAttention(nn.Module):
-    r''' Window based multi-head self attention (W-MSA) module with relative position bias.
+    ''' 
+    Window based multi-head self attention (W-MSA) module with relative position bias.
     It supports both of shifted and non-shifted window.
 
     Args:
@@ -271,7 +273,8 @@ class WindowAttention(nn.Module):
 
 
 class SwinTransformerBlock(nn.Module):
-    r''' Swin Transformer Block.
+    ''' 
+    Swin Transformer Block.
 
     Args:
         dim (int): Number of input channels.
@@ -407,7 +410,8 @@ class SwinTransformerBlock(nn.Module):
 
 
 class PatchMerging(nn.Module):
-    r''' Patch Merging Layer.
+    ''' 
+    Patch Merging Layer.
 
     Args:
         input_resolution (tuple[int]): Resolution of input feature.
@@ -456,7 +460,8 @@ class PatchMerging(nn.Module):
 
 
 class BasicLayer(nn.Module):
-    ''' A basic Swin Transformer layer for one stage.
+    ''' 
+    A basic Swin Transformer layer for one stage.
 
     Args:
         dim (int): Number of input channels.
@@ -526,7 +531,8 @@ class BasicLayer(nn.Module):
 
 
 class RSTB(nn.Module):
-    '''Residual Swin Transformer Block (RSTB).
+    '''
+    Residual Swin Transformer Block (RSTB).
 
     Args:
         dim (int): Number of input channels.
@@ -602,7 +608,8 @@ class RSTB(nn.Module):
 
 
 class PatchEmbed(nn.Module):
-    r''' Image to Patch Embedding
+    ''' 
+    Image to Patch Embedding
 
     Args:
         img_size (int): Image size.  Default: 224.
@@ -645,7 +652,8 @@ class PatchEmbed(nn.Module):
 
 
 class PatchUnEmbed(nn.Module):
-    r''' Image to Patch Unembedding
+    '''
+    Image to Patch Unembedding
 
     Args:
         img_size (int): Image size.  Default: 224.
@@ -746,7 +754,29 @@ class Manipulator(nn.Module):
 ### Model
 class VMMpp(nn.Module):
     '''
+    VMM++ model class
 
+    Args:
+        img_size (int | tuple(int)): Input image size. Default 384
+        patch_size (int | tuple(int)): Patch size. Default: 1
+        in_chans (int): Number of input image channels. Default: 3
+        embed_dim (int): Patch embedding dimension. Default: 192
+        depths (tuple(int)): Depth of each Swin Transformer layer.
+        num_heads (tuple(int)): Number of attention heads in different layers.
+        window_size (int): Window size. Default: 8
+        mlp_ratio (float): Ratio of mlp hidden dim to embedding dim. Default: 2
+        qkv_bias (bool): If True, add a learnable bias to query, key, value. Default: True
+        qk_scale (float): Override default qk scale of head_dim ** -0.5 if set. Default: None
+        drop_rate (float): Dropout rate. Default: 0
+        attn_drop_rate (float): Attention dropout rate. Default: 0
+        drop_path_rate (float): Stochastic depth rate. Default: 0.1
+        norm_layer (nn.Module): Normalization layer. Default: nn.LayerNorm.
+        ape (bool): If True, add absolute position embedding to the patch embedding. Default: False
+        patch_norm (bool): If True, add normalization after patch embedding. Default: True
+        use_checkpoint (bool): Whether to use checkpointing to save memory. Default: False
+        img_range (int): Image range. 1. or 255.
+        resi_connection (str): The convolutional block before residual connection. '1conv'/'3conv'
+        manipulator_num_resblk (int): Number of residual blocks of the maipulator. Default: 1
     '''
 
     def __init__(self, img_size=384, patch_size=1, in_chans=3,
@@ -770,12 +800,10 @@ class VMMpp(nn.Module):
             self.mean = torch.zeros(1, 1, 1, 1)
         self.window_size = window_size
 
-        #####################################################################################################
-        ################################### 1, Shallow Feature Extraction ###################################
+        #################### Shallow Feature Extraction ########################
         self.conv_first = nn.Conv2d(num_in_ch, embed_dim, 8, 8, 0) #Downsample x8
 
-        #####################################################################################################
-        ################################### 2, Deep Feature Extraction ######################################
+        ###################### Deep Feature Extraction #########################
         self.num_layers = len(depths)
         self.embed_dim = embed_dim
         self.ape = ape
@@ -841,12 +869,10 @@ class VMMpp(nn.Module):
                                                  nn.LeakyReLU(negative_slope=0.2, inplace=True),
                                                  nn.Conv2d(embed_dim // 4, embed_dim, 3, 1, 1))
         
-        #####################################################################################################
-        ######################################## 3, Manipulator #############################################
+        ############################## Manipulator #############################
         self.manipulator = Manipulator(manipulator_num_resblk, embed_dim)
 
-        #####################################################################################################
-        ############################# 4, Magnified Mutual Self Attention (MMSA) #############################
+        ############### Mixed Magnified Transformer Block (MMTB) ###############
         # split image into non-overlapping patches
         self.patch_embed_mmsa = PatchEmbed(
             img_size=img_size, patch_size=patch_size, in_chans=embed_dim, embed_dim=embed_dim,
@@ -905,8 +931,7 @@ class VMMpp(nn.Module):
                                                  nn.LeakyReLU(negative_slope=0.2, inplace=True),
                                                  nn.Conv2d(embed_dim // 4, embed_dim, 3, 1, 1))
         
-        #####################################################################################################
-        ##################################### 5, Decoder Reconstruction #####################################
+        ######################## Decoder Reconstruction ########################
         self.upsample_conv = nn.ConvTranspose2d(embed_dim, embed_dim, 8, 8, 0)
         self.conv_last = nn.Conv2d(embed_dim, num_out_ch, 3, 1, 1)
 

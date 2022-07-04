@@ -56,6 +56,7 @@ python3 train.py -d ../data/train -j 32 -b 5 --lr 0.00001 --epochs 20 #--resume 
 ## Acknowledgements
 
 This implementation borrows from the awesome works of:
+- [Learning-based Video Motion Magnification](https://github.com/12dmodel/deep_motion_mag 'Tensorflow implementation of Learning-based Video Motion Magnification')
 - [Motion Magnification PyTorch](https://github.com/kkjh0723/motion_magnification_pytorch 'Jinhyung')
 - [Pytorch Image Models](https://github.com/rwightman/pytorch-image-models 'Ross Wightman')
 - [SwinIR](https://github.com/JingyunLiang/SwinIR 'Image Restoration Using Swin Transformer')
