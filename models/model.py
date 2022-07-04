@@ -1007,7 +1007,7 @@ class VMMpp(nn.Module):
         ## Manipulator
         m = self.manipulator(res_a, res_b, amp)
 
-        ## Magnified Mutual Self Attention
+        ## Mixed Magnified Transformer Block
         res_m = self.conv_after_body_mmsa(self.forward_features_mmsa(m)) + m
 
         ## Decoder Reconstruction
