@@ -25,6 +25,9 @@ def main(args):
                  manipulator_num_resblk = 1).to(device)
     #print(model)
 
+    # Metrics
+    losses_recon, losses_reg1 = [],[]
+
     # Optionally resume from a checkpoint
     if args.resume:
         if os.path.isfile(args.resume):
@@ -184,8 +187,6 @@ if __name__ == '__main__':
     if args.device=='auto':
         device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     else:
-        device=args.device
-
-    losses_recon, losses_reg1 = [],[]
+        device=args.device  
 
     main(args)
