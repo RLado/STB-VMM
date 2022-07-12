@@ -9,12 +9,12 @@ import torchvision.datasets as datasets
 from PIL import Image
 
 from utils.data_loader import ImageFromFolderTest
-from models.model import VMMpp
+from models.model import STB-VMM
 
 
 def main(args):
     # Create model
-    model = VMMpp(img_size=384, patch_size=1, in_chans=3,
+    model = STB-VMM(img_size=384, patch_size=1, in_chans=3,
                  embed_dim=192, depths=[6, 6, 6, 6, 6, 6], num_heads=[6, 6, 6, 6, 6, 6],
                  window_size=8, mlp_ratio=2., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
@@ -81,11 +81,10 @@ def main(args):
         y_hat = y_hat.permute(0,2,3,1).cpu().detach().numpy()
         y_hat = np.clip(y_hat, -1.0, 1.0)
         y_hat = ((y_hat + 1.0) * 127.5).astype(np.uint8)
-        mag_frames.append(y_hat)
 
         # Save frames
-        fn = os.path.join(save_dir, 'VMM++_%s_%06d.png'%(args.mode,i+1))
-        im = Image.fromarray(np.concatenate(mag_frames, 0))
+        fn = os.path.join(save_dir, 'STB-VMM_%s_%06d.png'%(args.mode,i+1))
+        im = Image.fromarray(np.concatenate(y_hat, 0))
         im.save(fn)
 
 if __name__ == '__main__':
