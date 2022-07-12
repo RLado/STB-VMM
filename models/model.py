@@ -752,9 +752,9 @@ class Manipulator(nn.Module):
         return x_b + diff
 
 ### Model
-class STB-VMM(nn.Module):
+class STBVMM(nn.Module):
     '''
-    STB-VMM model class
+    STBVMM model class
 
     Args:
         img_size (int | tuple(int)): Input image size. Default 384
@@ -788,7 +788,7 @@ class STB-VMM(nn.Module):
                  manipulator_num_resblk = 1,
                  **kwargs):
                  
-        super(STB-VMM, self).__init__()
+        super(STBVMM, self).__init__()
         img_size = img_size // 8
         num_in_ch = in_chans
         num_out_ch = in_chans
@@ -1033,7 +1033,7 @@ class STB-VMM(nn.Module):
             return y_hat, res_a, res_b, None
 
 if __name__ == '__main__':
-    model = STB-VMM(img_size=384, patch_size=1, in_chans=3,
+    model = STBVMM(img_size=384, patch_size=1, in_chans=3,
                  embed_dim=48, depths=[6, 6, 6, 6], num_heads=[6, 6, 6, 6],
                  window_size=8, mlp_ratio=2., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,

@@ -11,12 +11,12 @@ import torchvision.transforms as transforms
 
 from utils.data_loader import ImageFromFolder
 from utils.avgMeter import AverageMeter
-from models.model import STB-VMM
+from models.model import STBVMM
 
 
 def main(args):
     # Create model
-    model = STB-VMM(img_size=384, patch_size=1, in_chans=3,
+    model = STBVMM(img_size=384, patch_size=1, in_chans=3,
                  embed_dim=192, depths=[6, 6, 6, 6, 6, 6], num_heads=[6, 6, 6, 6, 6, 6],
                  window_size=8, mlp_ratio=2., qkv_bias=True, qk_scale=None,
                  drop_rate=0., attn_drop_rate=0., drop_path_rate=0.1,
