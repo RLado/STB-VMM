@@ -111,7 +111,7 @@ if __name__ == '__main__':
                         help='amplification factor (default: 20.0)')
     parser.add_argument('--mode', default='static', type=str, choices=['static', 'dynamic'],
                         help='amplification mode (static, dynamic)')
-    parser.add_argument('--video_path', default='./../demo_video/Car_00.mkv', type=str, 
+    parser.add_argument('--video_path', default='./../demo_video/prefix_', type=str, 
                         help='path to video frames')
     parser.add_argument('--num_data', default=300, type=int,
                         help='number of frames')
