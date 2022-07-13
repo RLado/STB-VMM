@@ -46,9 +46,11 @@ python3 train.py -d ../data/train -j 32 -b 5 --lr 0.00001 --epochs 50 #--resume 
 ```bibtex
 @article{lado2022_STB-VMM,
   title={STB-VMM: Swin Transformer Based Video Motion Magnification},
+  doi = {},
   author={Lado-Roigé, Ricard and P{\'{e}}rez, Marco A.},
-  journal={},
-  year={2022}
+  journal={Knowledge-Based Systems},
+  year={2022},
+  note = { (Under review) }
 }
 ```
 

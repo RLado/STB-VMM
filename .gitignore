@@ -1,6 +1,6 @@
 # Dirs
 /__pycache__
-
+*/__pycache__
 
 # Files
 *.tar
