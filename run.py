@@ -73,7 +73,7 @@ def main(args):
             tmp = ((tmp + 1.0) * 127.5).astype(np.uint8)
             
             # Save first frame
-            fn = os.path.join(save_dir, 'demo_%s_%06d.png'%(args.mode,i+1))
+            fn = os.path.join(save_dir, 'STBVMM_%s_%06d.png'%(args.mode,i))
             im = Image.fromarray(np.concatenate(tmp, 0))
             im.save(fn)
         
