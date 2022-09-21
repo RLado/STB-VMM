@@ -109,6 +109,6 @@ num_data=$(($(ls "$save_dir"/"$output"_original|wc -l)-1))
 python3 run.py -j4 -b1 --load_ckpt "$model_ckpt" --save_dir "$save_dir"/"$output"_amped --video_path "$save_dir"/"$output"_original/frame --num_data "$num_data" --mode "$mode" --amp "$amp_factor" --device "$cuda_flag"
 
 #Format magnified frames to mp4
-ffmpeg -framerate "$framerate" -i "$save_dir"/"$output"_amped/demo_"$mode"_%06d.png "$save_dir"/"$output"_x"$amp_factor"_"$mode"_output.mp4
+ffmpeg -framerate "$framerate" -i "$save_dir"/"$output"_amped/STBVMM_"$mode"_%06d.png "$save_dir"/"$output"_x"$amp_factor"_"$mode"_output.mp4
 
 return 0;
