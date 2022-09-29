@@ -13,6 +13,14 @@ from models.model import STBVMM
 
 
 def main(args):
+    # Device choice (auto)
+    if args.device=='auto':
+        device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    else:
+        device=args.device
+
+    print(f'Using device: {device}')
+
     # Create model
     model = STBVMM(img_size=384, patch_size=1, in_chans=3,
                  embed_dim=192, depths=[6, 6, 6, 6, 6, 6], num_heads=[6, 6, 6, 6, 6, 6],
@@ -57,7 +65,9 @@ def main(args):
 
     # Magnification
     for i, (xa, xb, amp_factor) in enumerate(data_loader):
-        if i%10==0: print('processing sample %d'%i)
+        if i%args.print_freq == 0: 
+            print('processing sample: %d'%i)
+        
         amp_factor = amp_factor.unsqueeze(1).unsqueeze(1).unsqueeze(1)
 
         xa=xa.to(device)
@@ -93,9 +103,9 @@ if __name__ == '__main__':
     # Compute parameters
     parser.add_argument('-j', '--workers', default=16, type=int, metavar='N',
                         help='number of data loading workers (default: 16)')
-    parser.add_argument('-b', '--batch-size', default=1, type=int,
+    parser.add_argument('-b', '--batch_size', default=1, type=int,
                         metavar='N', help='mini-batch size (default: 1)')
-    parser.add_argument('--print-freq', '-p', default=100, type=int,
+    parser.add_argument('--print_freq', '-p', default=10, type=int,
                         metavar='N', help='print frequency (default: 100)')
     parser.add_argument('--load_ckpt', type=str, metavar='PATH',
                         help='path to load checkpoint')
@@ -118,13 +128,5 @@ if __name__ == '__main__':
     
 
     args = parser.parse_args()
-
-    # Device choice (auto) ======================================================
-    if args.device=='auto':
-        device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    else:
-        device=args.device
-
-    print(f'Using device: {device}')
 
     main(args)
