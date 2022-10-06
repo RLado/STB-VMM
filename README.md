@@ -18,28 +18,35 @@ The goal of Video Motion Magnification techniques is to magnify small motions in
 pip install -r requirements.txt
 ```
 
-FFMPEG is also required to run *process_video.sh*
+❗[FFMPEG](https://ffmpeg.org/ 'ffmpeg-5.1.2') is required to run the *magnify_video* script
 
 ---
 ## Testing
-To test STB-VMM just run the script named *process_video.sh* with the appropriate arguments. 
+To test STB-VMM just run the script named *magnify_video.sh* with the appropriate arguments. 
 
 For example:
 
 ```bash
-bash process_video.sh -amp 20 -i ../demo_video/baby.mp4 -m ckpt/ckpt_e49.pth.tar -o STB-VMM_demo_x20_static -s ../demo_video/ -f 30
+bash magnify_video.sh -amp 20 -i ../demo_video/baby.mp4 -m ckpt/ckpt_e49.pth.tar -o STB-VMM_demo_x20_static -s ../demo_video/ -f 30
 ```
 *Note: To magnify any video a pre-trained checkpoint is required.*
 
+*Note 2: If you are running Windows an alternative powershell script is provided*
+
 ---
 ## Training
-To train the STB-VMM model use *train.py* with the appropriate arguments. The training dataset can be downloaded from [here](https://github.com/12dmodel/deep_motion_mag). 
+To train the STB-VMM model use *train.py* with the appropriate arguments. The training dataset can be downloaded from [here](https://groups.csail.mit.edu/graphics/deep_motion_mag/data/readme.txt). 
 
 For example:
 
 ```bash
 python3 train.py -d ../data/train -j 32 -b 5 --lr 0.00001 --epochs 50 #--resume ckpt/ckpt_e01.pth.tar
 ```
+
+---
+## Demo
+
+https://user-images.githubusercontent.com/25719985/194240973-8d93968f-283b-4802-aacb-5e32175e16f3.mp4
 
 ---
 ## Citation

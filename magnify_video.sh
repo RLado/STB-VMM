@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #This simple script runs the motion magnification pipeline end to end
-#Usage example: sh process_video.sh -amp 20 -i ./../demo_vid_IQS/14_25Hz_400mV_2.mp4 -s ./../demo_vid_IQS -m ckpt/ckpt_e35.pth.tar -o 14_25Hz_400mV_2 -c
+#Usage example: sh magnify_video.sh -amp 20 -i ./../demo_vid_IQS/14_25Hz_400mV_2.mp4 -s ./../demo_vid_IQS -m ckpt/ckpt_e35.pth.tar -o 14_25Hz_400mV_2 -c
 
 set -e
 
