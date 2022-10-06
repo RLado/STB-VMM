@@ -52,7 +52,7 @@ def main(args):
     print(save_dir)
 
     # Data loader
-    dataset_mag = ImageFromFolderTest(args.video_path, mag=args.amp, mode=args.mode, num_data=args.num_data, preprocessing=False) 
+    dataset_mag = ImageFromFolderTest(args.video_path, mag=args.mag, mode=args.mode, num_data=args.num_data, preprocessing=False) 
     data_loader = data.DataLoader(dataset_mag, 
         batch_size=args.batch_size, 
         shuffle=False, 
@@ -64,17 +64,17 @@ def main(args):
     model.eval()
 
     # Magnification
-    for i, (xa, xb, amp_factor) in enumerate(data_loader):
+    for i, (xa, xb, mag_factor) in enumerate(data_loader):
         if i%args.print_freq == 0: 
             print('processing sample: %d'%i)
         
-        amp_factor = amp_factor.unsqueeze(1).unsqueeze(1).unsqueeze(1)
+        mag_factor = mag_factor.unsqueeze(1).unsqueeze(1).unsqueeze(1)
 
         xa=xa.to(device)
         xb=xb.to(device)
-        amp_factor=amp_factor.to(device)
+        mag_factor=mag_factor.to(device)
 
-        y_hat, _, _, _ = model(xa, xb, amp_factor)
+        y_hat, _, _, _ = model(xa, xb, mag_factor)
         
         if i==0: 
             # Back to image scale (0-255) 

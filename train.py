@@ -109,17 +109,17 @@ def train(loader, model, criterion, optimizer, epoch, args):
     model.train()
 
     end = time.time()
-    for i, (y, xa, xb, xc, amp_factor) in enumerate(loader):
+    for i, (y, xa, xb, xc, mag_factor) in enumerate(loader):
         y = y.to(device)
         xa = xa.to(device)
         xb = xb.to(device)
         xc = xc.to(device)
-        amp_factor = amp_factor.to(device)
+        mag_factor = mag_factor.to(device)
         data_time.update(time.time() - end)
 
         # Compute output
-        amp_factor = amp_factor.unsqueeze(1).unsqueeze(1).unsqueeze(1)
-        y_hat, rep_a, rep_b, rep_c = model(xa, xb, amp_factor, xc)
+        mag_factor = mag_factor.unsqueeze(1).unsqueeze(1).unsqueeze(1)
+        y_hat, rep_a, rep_b, rep_c = model(xa, xb, mag_factor, xc)
 
         # Compute losses
         loss_recon = criterion(y_hat, y)
