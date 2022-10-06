@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #This simple script runs the motion magnification pipeline end to end
-#Usage example: sh magnify_video.sh -amp 20 -i ./../demo_vid_IQS/14_25Hz_400mV_2.mp4 -s ./../demo_vid_IQS -m ckpt/ckpt_e35.pth.tar -o 14_25Hz_400mV_2 -c
+#Usage example: sh magnify_video.sh -mag 20 -i ./../demo_vid_IQS/14_25Hz_400mV_2.mp4 -s ./../demo_vid_IQS -m ckpt/ckpt_e35.pth.tar -o 14_25Hz_400mV_2 -c
 
 set -e
 
@@ -9,7 +9,7 @@ print_usage() {
   printf "Usage: 
   
   The following arguments must be provided:
-  -amp (amplification factor): Video amplification factor (default 25)
+  -mag (magnification factor): Video magnification factor (default 25)
   -i (input file): Path pointing to target video (required)
   -s (save dir): Path to a directory to store result files (required)
   -m (model chekpoint): Path to the last model checkpoint (required)
@@ -21,7 +21,7 @@ print_usage() {
   "
 }
 
-amp_factor='25'
+mag_factor='25'
 cuda_flag='cpu'
 framerate='60'
 #input=''
@@ -32,9 +32,9 @@ mode='static'
 
 while test $# -gt 0; do
         case "$1" in
-            -amp)
+            -mag)
                 shift
-                amp_factor=$1
+                mag_factor=$1
                 shift
                 ;;
             -c)
@@ -106,9 +106,9 @@ ls "$save_dir"/"$output"_original|wc -l
 num_data=$(($(ls "$save_dir"/"$output"_original|wc -l)-1))
 
 #Magnify frames
-python3 run.py -j4 -b1 --load_ckpt "$model_ckpt" --save_dir "$save_dir"/"$output"_amped --video_path "$save_dir"/"$output"_original/frame --num_data "$num_data" --mode "$mode" --amp "$amp_factor" --device "$cuda_flag"
+python3 run.py -j4 -b1 --load_ckpt "$model_ckpt" --save_dir "$save_dir"/"$output"_mag --video_path "$save_dir"/"$output"_original/frame --num_data "$num_data" --mode "$mode" --mag "$mag_factor" --device "$cuda_flag"
 
 #Format magnified frames to mp4
-ffmpeg -framerate "$framerate" -i "$save_dir"/"$output"_amped/STBVMM_"$mode"_%06d.png "$save_dir"/"$output"_x"$amp_factor"_"$mode"_output.mp4
+ffmpeg -framerate "$framerate" -i "$save_dir"/"$output"_mag/STBVMM_"$mode"_%06d.png "$save_dir"/"$output"_x"$mag_factor"_"$mode"_output.mp4
 
 return 0;

@@ -98,33 +98,34 @@ def main(args):
         im.save(fn)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Transformer Based Video Motion Magnification')
+    parser = argparse.ArgumentParser(description='Swin Transformer Based Video Motion Magnification')
     
-    # Compute parameters
+    # Application parameters
+    parser.add_argument('-i', '--video_path', type=str, metavar='PATH', required=True,
+                        help='path to video input frames')
+    parser.add_argument('-c', '--load_ckpt', type=str, metavar='PATH', required=True,
+                        help='path to load checkpoint')
+    parser.add_argument('-o', '--save_dir', default='demo', type=str, metavar='PATH',
+                        help='path to save generated frames (default: demo)')
+    parser.add_argument('-m', '--mag', metavar='N', default=20.0, type=float,
+                        help='magnification factor (default: 20.0)')
+    parser.add_argument('--mode', default='static', type=str, choices=['static', 'dynamic'],
+                        help='magnification mode (static, dynamic)')
+    parser.add_argument('-n', '--num_data', type=int, metavar='N', required=True,
+                        help='number of frames')
+
+    # Execute parameters
     parser.add_argument('-j', '--workers', default=16, type=int, metavar='N',
                         help='number of data loading workers (default: 16)')
     parser.add_argument('-b', '--batch_size', default=1, type=int,
-                        metavar='N', help='mini-batch size (default: 1)')
-    parser.add_argument('--print_freq', '-p', default=10, type=int,
+                        metavar='N', help='batch size (default: 1)')
+    parser.add_argument('-p', '--print_freq', default=100, type=int,
                         metavar='N', help='print frequency (default: 100)')
-    parser.add_argument('--load_ckpt', type=str, metavar='PATH',
-                        help='path to load checkpoint')
-    parser.add_argument('--save_dir', default='demo', type=str, metavar='PATH',
-                        help='path to save generated frames (default: demo)')
-    
-    # Device
-    parser.add_argument('--device',type=str,default='auto',metavar='',
-    help='Select device [auto/cpu/cuda] [Default=auto]')
 
-    # Application parameters
-    parser.add_argument('-m', '--amp', default=20.0, type=float,
-                        help='amplification factor (default: 20.0)')
-    parser.add_argument('--mode', default='static', type=str, choices=['static', 'dynamic'],
-                        help='amplification mode (static, dynamic)')
-    parser.add_argument('--video_path', default='./../demo_video/prefix_', type=str, 
-                        help='path to video frames')
-    parser.add_argument('--num_data', default=300, type=int,
-                        help='number of frames')
+    # Device
+    parser.add_argument('--device', type=str, default='auto', 
+                        choices = ['auto', 'cpu', 'cuda'], 
+                        help='select device [auto/cpu/cuda] (default: auto)')
     
 
     args = parser.parse_args()

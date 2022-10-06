@@ -1,5 +1,5 @@
 #This simple script runs the motion magnification pipeline end to end
-#Usage example: .\magnify_video.ps1 -amp 20 -i .\..\demo_vid_IQS\14_25Hz_400mV_2.mp4 -s .\..\demo_vid_IQS -m ckpt\ckpt_e35.pth.tar -o 14_25Hz_400mV_2 -c
+#Usage example: .\magnify_video.ps1 -mag 20 -i .\..\demo_vid_IQS\14_25Hz_400mV_2.mp4 -s .\..\demo_vid_IQS -m ckpt\ckpt_e35.pth.tar -o 14_25Hz_400mV_2 -c
 
 $ErrorActionPreference = "Stop"
 
@@ -7,7 +7,7 @@ function print_usage() {
     echo "Usage: 
   
   The following arguments must be provided:
-  -amp (amplification factor): Video amplification factor (default 25)
+  -mag (magnification factor): Video magnification factor (default 25)
   -i (input file): Path pointing to target video (required)
   -s (save dir): Path to a directory to store result files (required)
   -m (model chekpoint): Path to the last model checkpoint (required)
@@ -19,7 +19,7 @@ function print_usage() {
   "
 }
 
-$amp_factor = '25'
+$mag_factor = '25'
 $cuda_flag = 'cpu'
 $framerate = '60'
 #$in = ''
@@ -29,8 +29,8 @@ $mode = 'static'
 #$save_dir = ''
 
 for ( $i = 0; $i -lt $args.count; $i=$i+2 ) {
-    if ($args[ $i ] -eq "\amp"){ $amp_factor = $args[ $i+1 ]}
-    elseif ($args[ $i ] -eq "-amp"){ $amp_factor = $args[ $i+1 ]}
+    if ($args[ $i ] -eq "\mag"){ $mag_factor = $args[ $i+1 ]}
+    elseif ($args[ $i ] -eq "-mag"){ $mag_factor = $args[ $i+1 ]}
     elseif ($args[ $i ] -eq "\c"){ $cuda_flag = "cuda" }
     elseif ($args[ $i ] -eq "-c"){ $cuda_flag = "cuda" }
     elseif ($args[ $i ] -eq "\f"){ $framerate = $args[ $i+1 ]}
@@ -78,9 +78,9 @@ foreach ($f in $files){
 $num_data = $files.Count
 
 # Magnify frames
-python3 run.py -j4 -b1 --load_ckpt "$model_ckpt" --save_dir "$save_dir\$(echo $output)_amped" --video_path "$save_dir\$(echo $output)_original\frame" --num_data "$num_data" --mode "$mode" --amp "$amp_factor" --device "$cuda_flag"
+python3 run.py -j4 -b1 --load_ckpt "$model_ckpt" --save_dir "$save_dir\$(echo $output)_mag" --video_path "$save_dir\$(echo $output)_original\frame" --num_data "$num_data" --mode "$mode" --mag "$mag_factor" --device "$cuda_flag"
 
 # Format magnified frames to mp4
-ffmpeg -framerate "$framerate" -i "$save_dir\$(echo $output)_amped\STBVMM_$(echo $mode)_%06d.png" "$save_dir\$(echo $output)_x$(echo $amp_factor)_$(echo $mode)_output.mp4"
+ffmpeg -framerate "$framerate" -i "$save_dir\$(echo $output)_mag\STBVMM_$(echo $mode)_%06d.png" "$save_dir\$(echo $output)_x$(echo $mag_factor)_$(echo $mode)_output.mp4"
 
 exit 0

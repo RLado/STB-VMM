@@ -15,6 +15,12 @@ from models.model import STBVMM
 
 
 def main(args):
+    # Device choice
+    if args.device=='auto':
+        device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    else:
+        device=args.device  
+    
     # Create model
     model = STBVMM(img_size=384, patch_size=1, in_chans=3,
                  embed_dim=192, depths=[6, 6, 6, 6, 6, 6], num_heads=[6, 6, 6, 6, 6, 6],
@@ -29,19 +35,18 @@ def main(args):
     losses_recon, losses_reg1 = [],[]
 
     # Optionally resume from a checkpoint
-    if args.resume:
-        if os.path.isfile(args.resume):
-            print("=> loading checkpoint '{}'".format(args.resume))
-            checkpoint = torch.load(args.resume)
-            args.start_epoch = checkpoint['epoch']
+    if os.path.isfile(args.resume):
+        print("=> loading checkpoint '{}'".format(args.resume))
+        checkpoint = torch.load(args.resume)
+        args.start_epoch = checkpoint['epoch']
 
-            model.load_state_dict(checkpoint['state_dict'])
-            losses_recon = checkpoint['losses_recon'] 
-            losses_reg1 = checkpoint['losses_reg1']
-            print("=> loaded checkpoint '{}' (epoch {})"
-                  .format(args.resume, checkpoint['epoch']))
-        else:
-            print("=> no checkpoint found at '{}'".format(args.resume))
+        model.load_state_dict(checkpoint['state_dict'])
+        losses_recon = checkpoint['losses_recon'] 
+        losses_reg1 = checkpoint['losses_reg1']
+        print("=> loaded checkpoint '{}' (epoch {})"
+                .format(args.resume, checkpoint['epoch']))
+    else:
+        print("=> no checkpoint found at '{}'".format(args.resume))
 
     # Check saving directory
     ckpt_dir = args.ckpt
@@ -61,7 +66,7 @@ def main(args):
     criterion = nn.L1Loss(reduction='mean').to(device)
 
     # Optimizer 
-    optimizer = torch.optim.Adam(model.parameters(), args.lr,
+    optimizer = torch.optim.Adam(model.parameters(), args.learning_rate,
                                 betas=(0.9,0.999),
                                 weight_decay=args.weight_decay)
 
@@ -150,43 +155,43 @@ def L1_loss(input, target):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description = 'Transformer Based Video Motion Magnification')
-    parser.add_argument('-d', '--dataset', default='./../data/train', type=str, 
-                        help='Path to the train folder of the dataset')
-    parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
-                        help='number of data loading workers (default: 0)')
-    parser.add_argument('--epochs', default=12, type=int, metavar='N',
-                        help='number of total epochs to run')
-    parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
-                        help='manual epoch number (useful on restarts)')
-    parser.add_argument('-b', '--batch-size', default=4, type=int,
-                        metavar='N', help='mini-batch size (default: 4)')
-    parser.add_argument('--lr', '--learning-rate', default=0.0001, type=float,
-                        metavar='LR', help='initial learning rate')
-    parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
-                        help='momentum')
-    parser.add_argument('--weight-decay', '--wd', default=0.0, type=float,
+    parser = argparse.ArgumentParser(description = 'Swin Transformer Based Video Motion Magnification training script')
+
+    # Training parameters
+    parser.add_argument('-b', '--batch_size', default=5, type=int,
+                        metavar='N', help='batch size (default: 5)')
+    parser.add_argument('--epochs', default=50, type=int, metavar='N',
+                        help='number of total epochs to run (default: 50)')
+    parser.add_argument('-j', '--workers', default=16, type=int, metavar='N',
+                        help='number of data loading workers (default: 16)')
+    parser.add_argument('-lr', '--learning_rate', default=0.00001, type=float,
+                        metavar='LR', help='learning rate (default: 0.00001)')
+    parser.add_argument('-m', '--momentum', default=0.9, type=float, metavar='M',
+                        help='momentum (default: 0.9)')
+    parser.add_argument('-wd', '--weight_decay', default=0.0, type=float,
                         metavar='W', help='weight decay (default: 0.0)')
-    parser.add_argument('--num_data', default=100000, type=int,
-                        help='number of total data sample used for training (default: 100000)')
-    parser.add_argument('--print-freq', '-p', default=100, type=int,
-                        metavar='N', help='print frequency (default: 100)')
+    
+    # Data parameters
+    parser.add_argument('-d', '--dataset', type=str, metavar='PATH', required=True,
+                        help='Path to the train folder of the dataset')
+    parser.add_argument('-n', '--num_data', type=int, metavar='N', required=True,
+                        help='number of total data sample used for training')
+    
+
+    # Misc
     parser.add_argument('--resume', default='', type=str, metavar='PATH',
                         help='path to latest checkpoint (default: none)')
     parser.add_argument('--ckpt', default='ckpt', type=str, metavar='PATH',
                         help='path to save checkpoint (default: ckpt)')
+    parser.add_argument('-p', '--print_freq', default=100, type=int,
+                        metavar='N', help='print frequency (default: 100)')
     
     # Device
-    parser.add_argument('--device',type=str,default='auto',metavar='',
-    help='Select device [auto/cpu/cuda] [Default=auto]')
-    parser.add_argument('--weight_reg1', default=0.1, type=float,
+    parser.add_argument('--device', type=str, metavar='DEV', default='auto', 
+                        choices = ['auto', 'cpu', 'cuda'], 
+                        help='select device [auto/cpu/cuda] [default: auto]')
+    parser.add_argument('--weight_reg1', default=0.1, type=float, metavar='W',
                         help='weight regularization loss B - C (default: 0.1)')
     args = parser.parse_args()
-
-    # Device choice (auto) ======================================================
-    if args.device=='auto':
-        device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    else:
-        device=args.device  
 
     main(args)
