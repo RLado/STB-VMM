@@ -82,7 +82,7 @@ done
 #Check if required arguments are defined
 if [ -z "$input" ] || [ -z "$model_ckpt" ] || [ -z "$output" ] || [ -z "$save_dir" ]; then
     print_usage
-    return 1;
+    exit 1;
 fi
 
 #Convert video to frames
@@ -111,4 +111,4 @@ python3 run.py -j4 -b1 --load_ckpt "$model_ckpt" --save_dir "$save_dir"/"$output
 #Format magnified frames to mp4
 ffmpeg -framerate "$framerate" -i "$save_dir"/"$output"_mag/STBVMM_"$mode"_%06d.png "$save_dir"/"$output"_x"$mag_factor"_"$mode"_output.mp4
 
-return 0;
+exit 0;

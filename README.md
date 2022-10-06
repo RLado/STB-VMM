@@ -40,7 +40,7 @@ To train the STB-VMM model use *train.py* with the appropriate arguments. The tr
 For example:
 
 ```bash
-python3 train.py -d ../data/train -n 100000 -j 32 -b 5 --lr 0.00001 --epochs 50 #--resume ckpt/ckpt_e01.pth.tar
+python3 train.py -d ../data/train -n 100000 -j 32 -b 5 -lr 0.00001 --epochs 50 #--resume ckpt/ckpt_e01.pth.tar
 ```
 
 ---
