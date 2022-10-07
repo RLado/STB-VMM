@@ -7,10 +7,10 @@ function print_usage() {
     echo "Usage: 
   
   The following arguments must be provided:
-  -mag (magnification factor): Video magnification factor (default 25)
+  -mag (magnification factor): Video magnification factor (default 20)
   -i (input file): Path pointing to target video (required)
   -s (save dir): Path to a directory to store result files (required)
-  -m (model chekpoint): Path to the last model checkpoint (required)
+  -m (model checkpoint): Path to the last model checkpoint (required)
   -o (output): Output project name (required)
   -mod (mode): static(default)/dynamic (params default)
   -f (framerate): Framerate of the input video (default 60)
@@ -19,7 +19,7 @@ function print_usage() {
   "
 }
 
-$mag_factor = '25'
+$mag_factor = '20'
 $cuda_flag = 'cpu'
 $framerate = '60'
 #$in = ''
