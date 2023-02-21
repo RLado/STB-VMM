@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+title: 'STB-VMM: Swin Transformer Based Video Motion Magnification'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ricard
+    family-names: Lado-Roigé
+    email: ricardlador@iqs.edu
+    affiliation: >-
+      IQS School of Engineering, Universitat Ramon Llull,
+      Via Augusta 390, 08017 Barcelona, Spain
+    orcid: 'https://orcid.org/0000-0002-6421-7351'
+  - given-names: Marco A.
+    family-names: Pérez
+    orcid: 'https://orcid.org/0000-0003-4140-1823'
+    affiliation: >-
+      IQS School of Engineering, Universitat Ramon Llull,
+      Via Augusta 390, 08017 Barcelona, Spain
+identifiers:
+  - type: doi
+    value: 10.48550/arXiv.2302.10001
+    description: >-
+      STB-VMM: Swin Transformer Based Video Motion
+      Magnification
+repository-code: 'https://github.com/RLado/STB-VMM'
+abstract: >-
+  The goal of video motion magnification techniques is to
+  magnify small motions in a video to reveal previously
+  invisible or unseen movement. Its uses extend from
+  bio-medical applications and deep fake detection to
+  structural modal analysis and predictive maintenance.
+  However, discerning small motion from noise is a complex
+  task, especially when attempting to magnify very subtle
+  often sub-pixel movement. As a result, motion
+  magnification techniques generally suffer from noisy and
+  blurry outputs. This work presents a new state-of-the-art
+  model based on the Swin Transformer, which offers better
+  tolerance to noisy inputs as well as higher-quality
+  outputs that exhibit less noise, blurriness and artifacts
+  than prior-art. Improvements in output image quality will
+  enable more precise measurements for any application
+  reliant on magnified video sequences, and may enable
+  further development of video motion magnification
+  techniques in new technical fields. 
+keywords:
+  - Computer vision
+  - Deep Learning
+  - Swin Transformer
+  - Motion Magnification
+  - Image Quality Assessment
+license: MIT
+version: v1.0.0
+date-released: '2022-07-12'
