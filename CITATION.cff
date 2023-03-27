@@ -20,7 +20,7 @@ authors:
       Via Augusta 390, 08017 Barcelona, Spain
 identifiers:
   - type: doi
-    value: 10.48550/arXiv.2302.10001
+    value: 10.1016/j.knosys.2023.110493
     description: >-
       STB-VMM: Swin Transformer Based Video Motion
       Magnification

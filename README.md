@@ -27,7 +27,7 @@ To test STB-VMM just run the script named *magnify_video.sh* with the appropriat
 For example:
 
 ```bash
-bash magnify_video.sh -amp 20 -i ../demo_video/baby.mp4 -m ckpt/ckpt_e49.pth.tar -o STB-VMM_demo_x20_static -s ../demo_video/ -f 30
+bash magnify_video.sh -mag 20 -i ../demo_video/baby.mp4 -m ckpt/ckpt_e49.pth.tar -o STB-VMM_demo_x20_static -s ../demo_video/ -f 30
 ```
 *Note: To magnify any video a pre-trained checkpoint is required.*
 
@@ -51,13 +51,17 @@ https://user-images.githubusercontent.com/25719985/194240973-8d93968f-283b-4802-
 ---
 ## Citation
 ```bibtex
-@article{lado2022_STB-VMM,
-  title = {STB-VMM: Swin Transformer Based Video Motion Magnification},
-  doi = {10.48550/arXiv.2302.10001},
-  author = {Lado-Roig{\'{e}}, Ricard and P{\'{e}}rez, Marco A.},
+@article{LADOROIGE2023110493,
+  title = {STB-VMM: Swin Transformer based Video Motion Magnification},
   journal = {Knowledge-Based Systems},
-  year = {2022},
-  note = { (Under review) }
+  pages = {110493},
+  year = {2023},
+  issn = {0950-7051},
+  doi = {https://doi.org/10.1016/j.knosys.2023.110493},
+  url = {https://www.sciencedirect.com/science/article/pii/S0950705123002435},
+  author = {Ricard Lado-Roigé and Marco A. Pérez},
+  keywords = {Computer vision, Deep learning, Swin Transformer, Motion magnification, Image quality assessment},
+  abstract = {The goal of video motion magnification techniques is to magnify small motions in a video to reveal previously invisible or unseen movement. Its uses extend from bio-medical applications and deepfake detection to structural modal analysis and predictive maintenance. However, discerning small motion from noise is a complex task, especially when attempting to magnify very subtle, often sub-pixel movement. As a result, motion magnification techniques generally suffer from noisy and blurry outputs. This work presents a new state-of-the-art model based on the Swin Transformer, which offers better tolerance to noisy inputs as well as higher-quality outputs that exhibit less noise, blurriness, and artifacts than prior-art. Improvements in output image quality will enable more precise measurements for any application reliant on magnified video sequences, and may enable further development of video motion magnification techniques in new technical fields.}
 }
 ```
 
