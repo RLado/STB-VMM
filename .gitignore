@@ -1,6 +1,10 @@
 # Dirs
 /__pycache__
 */__pycache__
+build/
+libtorch/
 
 # Files
 *.tar
+*.zip
+*.pt

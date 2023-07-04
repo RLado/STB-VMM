@@ -22,4 +22,4 @@ mag_factor = torch.tensor(0.2)
 traced_script_module = torch.jit.trace(model, [exampleA, exampleB, mag_factor])
 
 # Save the model
-traced_script_module.save("model.pt")
+traced_script_module.save("STB-VMM.pt")

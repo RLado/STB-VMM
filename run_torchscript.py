@@ -13,16 +13,11 @@ from models.model import STBVMM
 
 
 def main(args):
-    # Device choice (auto)
-    if args.device == 'auto':
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    else:
-        device = args.device
-
-    print(f'Using device: {device}')
+    # No device choice: CPU only
+    print(f'Using CPU')
 
     # Create model
-    model = torch.jit.load("model.pt")
+    model = torch.jit.load("STB-VMM.pt")
 
     # Load checkpoint
     if os.path.isfile(args.load_ckpt):
@@ -63,9 +58,9 @@ def main(args):
 
         mag_factor = mag_factor.unsqueeze(1).unsqueeze(1).unsqueeze(1)
 
-        xa = xa.to(device)
-        xb = xb.to(device)
-        mag_factor = mag_factor.to(device)
+        xa = xa
+        xb = xb
+        mag_factor = mag_factor
 
         y_hat = model(xa, xb, mag_factor)
 
@@ -116,11 +111,6 @@ if __name__ == '__main__':
                         metavar='N', help='batch size (default: 1)')
     parser.add_argument('-p', '--print_freq', default=100, type=int,
                         metavar='N', help='print frequency (default: 100)')
-
-    # Device
-    parser.add_argument('--device', type=str, default='auto',
-                        choices=['auto', 'cpu', 'cuda'],
-                        help='select device [auto/cpu/cuda] (default: auto)')
 
     args = parser.parse_args()
 
