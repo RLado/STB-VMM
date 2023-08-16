@@ -48,6 +48,8 @@ python3 train.py -d ../data/train -n 100000 -j 32 -b 5 -lr 0.00001 --epochs 50 #
 
 https://user-images.githubusercontent.com/25719985/194240973-8d93968f-283b-4802-aacb-5e32175e16f3.mp4
 
+More at http://doi.org/10.17632/76s26nrcpv.2 
+
 ---
 ## Citation
 ```bibtex
